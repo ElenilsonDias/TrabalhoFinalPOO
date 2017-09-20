@@ -7,6 +7,7 @@ package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico;
 
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Cliente;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Conta;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.ModelException;
 import java.util.Scanner;
 
 /**
@@ -27,9 +28,10 @@ public class MenuOpcoesConta implements MenuInterface{
     public boolean showMenu() {
         
         boolean voltar = false;
+        boolean sair = false;
         int opcao;
+        String entrada;
         Scanner s = new Scanner(System.in);
-        Cliente cliente = null;
         
         while (!voltar)
         {
@@ -37,10 +39,11 @@ public class MenuOpcoesConta implements MenuInterface{
             {
                 System.out.println("##### OPERAÇÕES CONTA #####");
                 System.out.println("Escolha uma opção:");
-                System.out.println("> 1. Exibir Saldo");
-                System.out.println("> 2. Extrato por Período");
-                System.out.println("> 3. Transferência");
-                System.out.println("> 4. Voltar");
+                System.out.println("> 1. Saldo/Extrato");
+                System.out.println("> 2. Saque");
+                System.out.println("> 3. Depósito");
+                System.out.println("> 4. Transferência");
+                System.out.println("> 5. Voltar");
                 
                 opcao = s.nextInt();
                 
@@ -48,32 +51,191 @@ public class MenuOpcoesConta implements MenuInterface{
                 {
                     case 1:
                     {
-                        MenuCadCliente menuCadCliente = new MenuCadCliente();
-                        menuCadCliente.showMenu();
+                        MenuSaldoExtrato menuSaldoExtrato = new MenuSaldoExtrato();
+                        menuSaldoExtrato.showMenu();
                     }break;
                     case 2:
                     {
-                       MenuLoginCliente menuLoginCliente = new MenuLoginCliente();                    
-                       cliente = menuLoginCliente.Login();
-                       
-                       if (cliente != null)
-                       {
-                           MenuAltCliente menuAltCliente = new MenuAltCliente(cliente);
-                           menuAltCliente.showMenu();
-                       }
+                        s = new Scanner(System.in);
+                        System.out.println("##### INFORME O VALOR DO SAQUE #####");
+                        System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
+                        
+
+                        while (!sair)
+                        {
+                           System.out.print("Valor [R$]:");
+                           
+                            try
+                            {
+                                entrada = s.nextLine();
+                                
+                                if (entrada.equalsIgnoreCase("S"))
+                                    sair = true;
+                                else if (!entrada.trim().equals("")) 
+                                {
+                                  double valorSaque = Double.parseDouble(entrada);
+                                    
+                                  System.out.print("Confirma o saque de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                  entrada = s.nextLine();
+                                  
+                                  if (entrada.equalsIgnoreCase("S"))
+                                  {
+                                      System.out.println("Saque realizado com sucesso. Por favor retire o cartão.");
+                                    s.nextLine();
+                                  }
+                                  else
+                                  {
+                                    System.out.println("Operação não realizada.");
+                                    s.nextLine();
+                                  }
+                                  
+                                  break;
+                                }                                
+                                                           
+                            }
+                            catch(Exception ex)
+                            {
+                                System.out.println("Valor Inválido!");
+                            }                                                        
+                        }
                     }break;
                     case 3:
                     {
-                       MenuLoginCliente menuLoginCliente = new MenuLoginCliente();                    
-                       cliente = menuLoginCliente.Login();
-                       
-                       if (cliente != null)
-                       {
-                           MenuCadConta menuCadConta = new MenuCadConta(cliente);
-                           menuCadConta.showMenu();
-                       }
+                        s = new Scanner(System.in);
+                        System.out.println("##### INFORME O VALOR DO DEPÓSITO #####");
+                        System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
+                        
+
+                        while (!sair)
+                        {
+                           System.out.print("Valor [R$]:");
+                           
+                            try
+                            {
+                                entrada = s.nextLine();
+                                
+                                if (entrada.equalsIgnoreCase("S"))
+                                    sair = true;
+                                else if (!entrada.trim().equals("")) 
+                                {
+                                  double valorSaque = Double.parseDouble(entrada);
+                                    
+                                  System.out.print("Confirma o deposito de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                  entrada = s.nextLine();
+                                  
+                                  if (entrada.equalsIgnoreCase("S"))
+                                  {
+                                      System.out.println("Depósito realizado com sucesso.");
+                                    s.nextLine();
+                                  }
+                                  else
+                                  {
+                                    System.out.println("Operação não realizada.");
+                                    s.nextLine();
+                                  }
+                                  
+                                  break;
+                                }                                
+                                                           
+                            }
+                            catch(Exception ex)
+                            {
+                                System.out.println("Valor Inválido!");
+                            }                                                        
+                        }
                     }break;
                     case 4:
+                    {
+                        s = new Scanner(System.in);
+                        System.out.println("##### TRANSFERÊNCIA #####");
+                        System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
+                         
+                        while (!sair)
+                        {
+                            System.out.print("> AGENCIA DESTINO: ");
+                            entrada = s.nextLine();
+
+                            try
+                            {
+                                if (entrada.equalsIgnoreCase("S"))
+                                    sair = true;
+                                else if (!entrada.trim().equals("")) 
+                                {
+
+                                    break;
+                                }
+
+                            }
+                            catch(Exception ex)
+                            {
+                                 System.out.println(ex.getMessage());
+                                System.out.println();
+                            }
+                        }
+                        
+                        while (!sair)
+                        {
+                            System.out.print("> CONTA DESTINO: ");
+                            entrada = s.nextLine();
+
+                            try
+                            {
+                                if (entrada.equalsIgnoreCase("S"))
+                                    sair = true;
+                                else if (!entrada.trim().equals("")) 
+                                {
+
+                                    break;
+                                }
+
+                            }
+                            catch(Exception ex)
+                            {
+                                 System.out.println(ex.getMessage());
+                                System.out.println();
+                            }
+                        }
+                        
+                        while (!sair)
+                        {
+                           System.out.print("Valor [R$]:");
+                           
+                            try
+                            {
+                                entrada = s.nextLine();
+                                
+                                if (entrada.equalsIgnoreCase("S"))
+                                    sair = true;
+                                else if (!entrada.trim().equals("")) 
+                                {
+                                  double valorSaque = Double.parseDouble(entrada);
+                                    
+                                  System.out.print("Confirma a transferência de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                  entrada = s.nextLine();
+                                  
+                                  if (entrada.equalsIgnoreCase("S"))
+                                  {
+                                      System.out.println("Transferência realizado com sucesso.");
+                                    s.nextLine();
+                                  }
+                                  else
+                                  {
+                                    System.out.println("Operação não realizada.");
+                                    s.nextLine();
+                                  }
+                                  
+                                  break;
+                                }                                
+                                                           
+                            }
+                            catch(Exception ex)
+                            {
+                                System.out.println("Valor Inválido!");
+                            }                                                        
+                        }
+                        
+                    }break;
+                    case 5:
                     {
                         voltar = true;
                     }break;

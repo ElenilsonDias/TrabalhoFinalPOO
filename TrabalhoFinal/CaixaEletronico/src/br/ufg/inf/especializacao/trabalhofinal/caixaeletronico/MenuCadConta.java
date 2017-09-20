@@ -47,13 +47,14 @@ public class MenuCadConta implements MenuInterface{
                     
                     try
                     {
-                        if (!entrada.trim().equals("")) 
+                        if (entrada.equalsIgnoreCase("S"))
+                            sair = true;
+                        else if (!entrada.trim().equals("")) 
                         {
                             
                             break;
                         }
-                        else
-                            break;
+                        
                     }
                     catch(ModelException ex)
                     {
