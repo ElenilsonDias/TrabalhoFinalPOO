@@ -17,14 +17,19 @@ public class Conta {
     private long saldo;
     private long senha;
 
+    public Conta (){
+        //
+    }
+    
     public long getConta() {
         return conta;
     }
-
+/*
+    ## CAMPO CONTA DEFINIDO POR AUTO INCREMENTO
     public void setConta(long conta) {
         this.conta = conta;
     }
-
+*/
     public long getAgencia() {
         return agencia;
     }

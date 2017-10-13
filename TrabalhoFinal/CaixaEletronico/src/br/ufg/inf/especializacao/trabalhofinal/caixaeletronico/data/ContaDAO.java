@@ -27,17 +27,18 @@ public class ContaDAO {
     private final String COLUMN_SALDO = "SALDO";
     private final String COLUMN_SENHA = "SENHA";
     
-    public void create(Conta conta) throws SQLException {
+    public long create(Conta conta) throws SQLException {
+        long retConta = 0;
         
         final String SQL = "INSERT INTO " + TABLE_NAME + "(" 
-                + COLUMN_CONTA + "," 
+                //+ COLUMN_CONTA + "," 
                 + COLUMN_AGENCIA + "," 
                 + COLUMN_TIPO + "," 
                 + COLUMN_CPFCNPJ + "," 
                 + COLUMN_SALDO + "," 
                 + COLUMN_SENHA 
                 + ") VALUES (" 
-                + conta.getConta() + "," 
+                //+ conta.getConta() + "," 
                 + conta.getAgencia() + "," 
                 + conta.getTipo() + ","
                 + conta.getCpfcnpj() + ","
@@ -46,11 +47,17 @@ public class ContaDAO {
         Connection connection = ConnectionUtils.getConnection();
         
         Statement cmd = null;
-        ResultSet res = null;
+        ResultSet res;
         
         try {
             cmd = connection.createStatement();
             cmd.executeUpdate(SQL);
+            
+            res = cmd.executeQuery("SELECT last_insert_rowid()");
+            if (res.next()) {
+                retConta = res.getLong(1);
+            }
+            
             connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
@@ -61,7 +68,9 @@ public class ContaDAO {
             if (connection != null) {
                 connection.close();
             }
+        
         }
+        return retConta; //  Retorna Conta Autoincrement
     }
     
     public Conta getByCod(long nconta) throws SQLException {
@@ -79,7 +88,7 @@ public class ContaDAO {
             }
             
             Conta conta = new Conta();
-            conta.setConta(res.getLong(COLUMN_CONTA));
+            //conta.setConta(res.getLong(COLUMN_CONTA));
             conta.setAgencia(res.getLong(COLUMN_AGENCIA));
             conta.setTipo(res.getLong(COLUMN_TIPO));
             conta.setCpfcnpj(res.getLong(COLUMN_CPFCNPJ));
@@ -109,7 +118,7 @@ public class ContaDAO {
             ResultSet res = statement.executeQuery();
             while(res.next()){
                 Conta conta = new Conta();
-                conta.setConta(res.getLong(COLUMN_CONTA));
+                //conta.setConta(res.getLong(COLUMN_CONTA));
                 conta.setAgencia(res.getLong(COLUMN_AGENCIA));
                 conta.setTipo(res.getLong(COLUMN_TIPO));
                 conta.setCpfcnpj(res.getLong(COLUMN_CPFCNPJ));
@@ -133,7 +142,7 @@ public class ContaDAO {
     
     public boolean update(Conta conta) throws SQLException {
         String sqlUpdate = "UPDATE " + TABLE_NAME + " SET " 
-                + COLUMN_CONTA + " = ?, "
+                //+ COLUMN_CONTA + " = ?, "
                 + COLUMN_AGENCIA + " = ?, "
                 + COLUMN_TIPO + " = ?, "
                 + COLUMN_CPFCNPJ + " = ?, "
@@ -145,10 +154,10 @@ public class ContaDAO {
             connection = ConnectionUtils.getConnection();
             try { 
                 procedure = connection.prepareStatement(sqlUpdate);
-                procedure.setLong(1, conta.getConta());               
-                procedure.setLong(2, conta.getAgencia());
-                procedure.setLong(3, conta.getTipo());
-                procedure.setLong(4, conta.getCpfcnpj());
+                //procedure.setLong(1, conta.getConta());               
+                procedure.setLong(1, conta.getAgencia());
+                procedure.setLong(2, conta.getTipo());
+                procedure.setLong(3, conta.getCpfcnpj());
                 procedure.setLong(4, conta.getSaldo());
                 procedure.setLong(5, conta.getSenha());
                 

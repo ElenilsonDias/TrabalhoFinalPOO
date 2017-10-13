@@ -5,7 +5,7 @@
  */
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico;
 
-import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ClienteDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ContaDAO;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Cliente;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Conta;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.ModelException;
@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 public class MenuCadConta implements MenuInterface{
 
-    public static final int AGENCIA = 133;
+    public static final int AGENCIA = 2468;
     Cliente cliente = null;
     
     public MenuCadConta(Cliente cliente)
@@ -25,20 +25,20 @@ public class MenuCadConta implements MenuInterface{
         this.cliente = cliente;
     }
     
-      @Override
+    @Override
     public boolean showMenu() {
+        
         boolean sair = false;
         String entrada;
         Scanner s = new Scanner(System.in);
+        Conta conta = new Conta();
         
         while (!sair)
         {
             try
             {
                 System.out.println("##### CADASTRO DE CONTA #####");
-                System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
-                
-                
+                System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");                       
                 
                 while (!sair)
                 {
@@ -47,11 +47,18 @@ public class MenuCadConta implements MenuInterface{
                     
                     try
                     {
-                        if (entrada.equalsIgnoreCase("S"))
+                        if (entrada.equalsIgnoreCase("S")){
                             sair = true;
-                        else if (!entrada.trim().equals("")) 
-                        {
-                            
+                        }else if (entrada.equalsIgnoreCase("C")){
+                            conta.setTipo(1);
+                            break;
+                        }else if (entrada.equalsIgnoreCase("P")){
+                            conta.setTipo(2);
+                            break;
+                        }else{
+                            System.out.println("Opção inválida!");
+                            s = new Scanner(System.in);
+                            s.nextLine();
                             break;
                         }
                         
@@ -68,8 +75,6 @@ public class MenuCadConta implements MenuInterface{
                     }
                 }
                 
-                
-                
                 while (!sair)
                 {
                     System.out.print("> SENHA DA CONTA:");
@@ -81,7 +86,7 @@ public class MenuCadConta implements MenuInterface{
                             sair = true;
                         else if (!entrada.trim().equals(""))
                         {
-                            //conta.setSenha(Long.parseLong(entrada));
+                            conta.setSenha(Long.parseLong(entrada));
                             
                             while (!sair)
                             {
@@ -91,14 +96,18 @@ public class MenuCadConta implements MenuInterface{
                                 if (entrada.equalsIgnoreCase("S"))
                                     sair = true;
                                 else if (
-                                            true
-                                        //conta.getSenha() == Long.parseLong(entrada)
+                                        conta.getSenha() == Long.parseLong(entrada)
                                         )
                                 {
-                                        //Insere conta no BD AQUI
+
+                                    conta.setAgencia(AGENCIA);
+                                    conta.setCpfcnpj(cliente.getCpfcnpj());
+                                    
+                                    ContaDAO contaDAO = new ContaDAO();
+                                    long retConta = contaDAO.create(conta); // Retorna Conta Autoincrement
                                     
                                     //Exibe a mensagem de sucesso
-                                    System.out.println("Conta Cadastrada com Sucesso.");
+                                    System.out.println("Conta Número: " + retConta + " Cadastrada com Sucesso.");
                                     System.out.println();
                                     return true;
                                 }
