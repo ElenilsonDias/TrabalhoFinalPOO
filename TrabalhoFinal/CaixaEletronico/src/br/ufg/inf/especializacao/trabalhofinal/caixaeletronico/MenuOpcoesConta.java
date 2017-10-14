@@ -79,9 +79,9 @@ public class MenuOpcoesConta implements MenuInterface{
                                   entrada = s.nextLine();
                                   
                                   if (entrada.equalsIgnoreCase("S"))
-                                  {
-                                      System.out.println("Saque realizado com sucesso. Por favor retire o cartão.");
-                                    s.nextLine();
+                                  { 
+                                      conta.setSaque(valorSaque);
+                                      s.nextLine();
                                   }
                                   else
                                   {
@@ -215,7 +215,7 @@ public class MenuOpcoesConta implements MenuInterface{
                                   
                                   if (entrada.equalsIgnoreCase("S"))
                                   {
-                                      System.out.println("Transferência realizado com sucesso.");
+                                      conta.setTransferencia(valorSaque, opcao);
                                     s.nextLine();
                                   }
                                   else

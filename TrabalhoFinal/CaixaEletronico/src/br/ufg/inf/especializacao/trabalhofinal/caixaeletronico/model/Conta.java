@@ -5,6 +5,10 @@
  */
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model;
 
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ClienteDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ContaDAO;
+import java.sql.SQLException;
+
 /**
  *
  * @author Renato
@@ -14,22 +18,24 @@ public class Conta {
     private long agencia;
     private long tipo;
     private long cpfcnpj;
-    private long saldo;
+    private double saldo;
     private long senha;
 
     public Conta (){
         //
     }
+
+    
+    
     
     public long getConta() {
         return conta;
     }
-/*
-    ## CAMPO CONTA DEFINIDO POR AUTO INCREMENTO
+
     public void setConta(long conta) {
         this.conta = conta;
     }
-*/
+
     public long getAgencia() {
         return agencia;
     }
@@ -62,11 +68,11 @@ public class Conta {
         } 
     }
 
-    public long getSaldo() {
+    public double getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(long saldo) {
+    public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
 
@@ -79,5 +85,36 @@ public class Conta {
             throw new ModelException("A senha deve conter 6 digitos.");
         }
         this.senha = senha;
+        
+    }
+     public void setSaque(double vl_saque) throws SQLException {
+        if(vl_saque <=saldo){
+            this.saldo = this.saldo - vl_saque;
+            ContaDAO contaDAO = new ContaDAO ();
+            ContaDAO.uptade(this);
+            System.out.println("Saque realizado com sucesso. Por favor retire o cartão.");
+        }
+        else 
+            System.out.println("Saldo insuficiente! ");
+    }
+    
+     public void setTransferencia(double vl_transf,long conta_dest) throws SQLException {
+          if(vl_transf <=saldo){
+            this.saldo = this.saldo - vl_transf;
+            ContaDAO contaDAO = new ContaDAO ();
+            ContaDAO.uptade(this);
+            
+           Conta conta2 = null;
+           
+           conta2=contaDAO.getByCod(conta_dest);
+           conta2.setSaldo(conta2.getSaldo()+vl_transf);
+           
+           ContaDAO.uptade(conta2);
+           
+            
+            System.out.println("Transferência realizado com sucesso.");
+        }
+        else 
+            System.out.println("Saldo insuficiente! ");
     }
 }

@@ -6,6 +6,7 @@
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico;
 
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ClienteDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ContaDAO;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Cliente;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Conta;
 import java.util.Scanner;
@@ -68,8 +69,10 @@ public class MenuLoginConta implements MenuInterface{
                             sair = true;
                         else
                         {
-                              
-                            //conta = conta.getConta
+                             
+                            ContaDAO contaDAO = new ContaDAO ();
+                            conta=contaDAO.getByCod(Long.parseLong(entrada));
+                          
                             
                             break;
                         }

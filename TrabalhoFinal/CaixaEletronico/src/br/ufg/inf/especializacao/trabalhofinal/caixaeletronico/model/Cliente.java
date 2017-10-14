@@ -16,6 +16,8 @@ public class Cliente {
     private long telefone;
     private long senha;
 
+   
+
     /**
      * @return the cpfcnpj
      */

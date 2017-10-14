@@ -19,6 +19,10 @@ import java.util.List;
  * @author Renato
  */
 public class ContaDAO {
+
+    public static void uptade(Conta aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     private final String TABLE_NAME = "CONTA";
     private final String COLUMN_CONTA = "CONTA";
     private final String COLUMN_AGENCIA = "AGENCIA";
@@ -88,7 +92,7 @@ public class ContaDAO {
             }
             
             Conta conta = new Conta();
-            //conta.setConta(res.getLong(COLUMN_CONTA));
+            conta.setConta(res.getLong(COLUMN_CONTA));
             conta.setAgencia(res.getLong(COLUMN_AGENCIA));
             conta.setTipo(res.getLong(COLUMN_TIPO));
             conta.setCpfcnpj(res.getLong(COLUMN_CPFCNPJ));
@@ -158,7 +162,7 @@ public class ContaDAO {
                 procedure.setLong(1, conta.getAgencia());
                 procedure.setLong(2, conta.getTipo());
                 procedure.setLong(3, conta.getCpfcnpj());
-                procedure.setLong(4, conta.getSaldo());
+                procedure.setDouble(4, conta.getSaldo());
                 procedure.setLong(5, conta.getSenha());
                 
                 int res = procedure.executeUpdate();
@@ -184,5 +188,11 @@ public class ContaDAO {
                 + " WHERE " + COLUMN_CONTA + "=" + conta.getConta() + ";";
         ConnectionUtils.executeVoidQuery(query);
     }
+
+    public void getByCod(String entrada) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
     
 }
