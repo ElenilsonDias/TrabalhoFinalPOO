@@ -107,9 +107,17 @@ public class MenuCadConta implements MenuInterface{
                                     long retConta = contaDAO.create(conta); // Retorna Conta Autoincrement
                                     
                                     //Exibe a mensagem de sucesso
-                                    System.out.println("Conta Número: " + retConta + " Cadastrada com Sucesso.");
+                                    System.out.println();
+                                    System.out.println("Cadastrado Efetuado com Sucesso!!!");
+                                    System.out.println("Agência Nº: " + conta.getAgencia());
+                                    if(conta.getTipo()==1){
+                                        System.out.println("Conta Corrente Nº: " + retConta);
+                                    }else if(conta.getTipo()==2){
+                                        System.out.println("Conta Poupança Nº: " + retConta);
+                                    }
                                     System.out.println();
                                     return true;
+                                    
                                 }
                                 else
                                 {

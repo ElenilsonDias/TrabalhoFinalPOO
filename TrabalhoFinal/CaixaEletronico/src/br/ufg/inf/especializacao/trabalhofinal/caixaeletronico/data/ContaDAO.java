@@ -20,9 +20,6 @@ import java.util.List;
  */
 public class ContaDAO {
 
-    public static void uptade(Conta aThis) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     private final String TABLE_NAME = "CONTA";
     private final String COLUMN_CONTA = "CONTA";
     private final String COLUMN_AGENCIA = "AGENCIA";
@@ -96,7 +93,7 @@ public class ContaDAO {
             conta.setAgencia(res.getLong(COLUMN_AGENCIA));
             conta.setTipo(res.getLong(COLUMN_TIPO));
             conta.setCpfcnpj(res.getLong(COLUMN_CPFCNPJ));
-            conta.setSaldo(res.getLong(COLUMN_SALDO));
+            conta.setSaldo(res.getDouble(COLUMN_SALDO));
             conta.setSenha(res.getLong(COLUMN_SENHA));
             return conta;
         } catch (SQLException e) {
@@ -122,11 +119,11 @@ public class ContaDAO {
             ResultSet res = statement.executeQuery();
             while(res.next()){
                 Conta conta = new Conta();
-                //conta.setConta(res.getLong(COLUMN_CONTA));
+                conta.setConta(res.getLong(COLUMN_CONTA));
                 conta.setAgencia(res.getLong(COLUMN_AGENCIA));
                 conta.setTipo(res.getLong(COLUMN_TIPO));
                 conta.setCpfcnpj(res.getLong(COLUMN_CPFCNPJ));
-                conta.setSaldo(res.getLong(COLUMN_SALDO));
+                conta.setSaldo(res.getDouble(COLUMN_SALDO));
                 conta.setSenha(res.getLong(COLUMN_SENHA));
                 contas.add(conta);
             }
@@ -146,10 +143,6 @@ public class ContaDAO {
     
     public boolean update(Conta conta) throws SQLException {
         String sqlUpdate = "UPDATE " + TABLE_NAME + " SET " 
-                //+ COLUMN_CONTA + " = ?, "
-                + COLUMN_AGENCIA + " = ?, "
-                + COLUMN_TIPO + " = ?, "
-                + COLUMN_CPFCNPJ + " = ?, "
                 + COLUMN_SALDO + " = ?, "
                 + COLUMN_SENHA + " = ?"
                 +" WHERE " + COLUMN_CONTA + "= ?";
@@ -158,13 +151,9 @@ public class ContaDAO {
             connection = ConnectionUtils.getConnection();
             try { 
                 procedure = connection.prepareStatement(sqlUpdate);
-                //procedure.setLong(1, conta.getConta());               
-                procedure.setLong(1, conta.getAgencia());
-                procedure.setLong(2, conta.getTipo());
-                procedure.setLong(3, conta.getCpfcnpj());
-                procedure.setDouble(4, conta.getSaldo());
-                procedure.setLong(5, conta.getSenha());
-                
+                procedure.setDouble(1, conta.getSaldo());
+                procedure.setLong(2, conta.getSenha());
+                procedure.setLong(3, conta.getConta());
                 int res = procedure.executeUpdate();
                 if(res == 1){
                     connection.commit();
@@ -180,19 +169,13 @@ public class ContaDAO {
                     connection.close();
                 }
             }
-            return false;
+            return true;
     }
     
     public void delete(Conta conta) throws SQLException {
         String query = "DELETE FROM " + TABLE_NAME
                 + " WHERE " + COLUMN_CONTA + "=" + conta.getConta() + ";";
         ConnectionUtils.executeVoidQuery(query);
-    }
-
-    public void getByCod(String entrada) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
+    } 
     
 }

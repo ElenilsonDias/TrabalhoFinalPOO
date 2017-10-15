@@ -5,8 +5,8 @@
  */
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model;
 
-import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ClienteDAO;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ContaDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.HistoricoDAO;
 import java.sql.SQLException;
 
 /**
@@ -24,9 +24,6 @@ public class Conta {
     public Conta (){
         //
     }
-
-    
-    
     
     public long getConta() {
         return conta;
@@ -87,34 +84,62 @@ public class Conta {
         this.senha = senha;
         
     }
-     public void setSaque(double vl_saque) throws SQLException {
-        if(vl_saque <=saldo){
-            this.saldo = this.saldo - vl_saque;
-            ContaDAO contaDAO = new ContaDAO ();
-            ContaDAO.uptade(this);
-            System.out.println("Saque realizado com sucesso. Por favor retire o cartão.");
+    
+    public void setDeposito(double valor) throws SQLException {
+        this.saldo = this.saldo + valor;
+        ContaDAO contaDAO = new ContaDAO ();
+        HistoricoDAO historicoDAO = new HistoricoDAO(this);
+        if(contaDAO.update(this)){
+            historicoDAO.setTransacao("Depósito", valor);
+            System.out.println("Depósito no valor de R$ " + String.format("%.2f",valor) + " realizado com sucesso.");
+            System.out.println("> Saldo R$ " + String.format("%.2f",saldo));
         }
-        else 
-            System.out.println("Saldo insuficiente! ");
     }
     
-     public void setTransferencia(double vl_transf,long conta_dest) throws SQLException {
-          if(vl_transf <=saldo){
-            this.saldo = this.saldo - vl_transf;
+    public void setSaque(double valor) throws SQLException {
+        if(valor <= saldo){
+            this.saldo = this.saldo - valor;
             ContaDAO contaDAO = new ContaDAO ();
-            ContaDAO.uptade(this);
-            
-           Conta conta2 = null;
-           
-           conta2=contaDAO.getByCod(conta_dest);
-           conta2.setSaldo(conta2.getSaldo()+vl_transf);
-           
-           ContaDAO.uptade(conta2);
-           
-            
-            System.out.println("Transferência realizado com sucesso.");
+            HistoricoDAO historicoDAO = new HistoricoDAO(this);
+            if(contaDAO.update(this)){
+                historicoDAO.setTransacao("Saque", valor);
+                System.out.println("Saque no valor de R$ " + String.format("%.2f",valor) + " realizado com sucesso.");
+                System.out.println("> Saldo R$ " + String.format("%.2f",saldo));
+                System.out.println("Por favor retire o cartão.");
+            }
         }
-        else 
+        else{
             System.out.println("Saldo insuficiente! ");
+            System.out.println("> Saldo R$ " + String.format("%.2f",saldo));
+        }
+        
+    }
+    
+     public void setTransferencia(long agencia_dest, long conta_dest, double valor) throws SQLException {
+          if(valor <= saldo){
+            this.saldo = this.saldo - valor;
+            ContaDAO contaDAO = new ContaDAO ();
+            HistoricoDAO historicoDAO = new HistoricoDAO(this);
+            if(contaDAO.update(this)){
+                historicoDAO.setTransacao("Transferência enviada - " + agencia_dest + " " + conta_dest, valor);
+                
+                Conta conta2 = null;
+
+                conta2=contaDAO.getByCod(conta_dest);
+                conta2.setSaldo(conta2.getSaldo()+valor);
+                HistoricoDAO historicoDAO2 = new HistoricoDAO(conta2);
+                if(contaDAO.update(conta2)){
+                    historicoDAO2.setTransacao("Transferência recebida - " + agencia + " " + conta, valor);
+                    System.out.println("Transferência no valor de R$ " + String.format("%.2f",valor) + " realizada com sucesso.");
+                    System.out.println("> Saldo R$ " + String.format("%.2f",saldo));
+                }
+                
+            }
+
+        }
+        else {
+            System.out.println("Saldo insuficiente! ");
+            System.out.println("> Saldo R$ " + String.format("%.2f",saldo));
+        }
     }
 }

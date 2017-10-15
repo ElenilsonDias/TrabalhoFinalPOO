@@ -5,8 +5,15 @@
  */
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico;
 
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.ContaDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.data.HistoricoDAO;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Conta;
+import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Historico;
+import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -15,16 +22,29 @@ import java.util.Scanner;
  */
 public class MenuSaldoExtrato implements MenuInterface{
 
+    private Conta conta = null;
+    
+    public MenuSaldoExtrato(Conta conta)
+    {
+        this.conta = conta;
+        
+    }
+ 
     @Override
     public boolean showMenu() {
         boolean voltar = false, sair = false;
         int opcao;
         String entrada;
         Scanner s = new Scanner(System.in);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date dataInicial=null,dataFinal=null;
         
-        dateFormat.setLenient(false);
+        SimpleDateFormat dtBR = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dtBr = new SimpleDateFormat("dd/MM");
+        DateFormat dtUS = new SimpleDateFormat("yyyy-MM-dd"); 
+        String strData;
+        dtBR.setLenient(false);
+        
+        String dataInicial=null, dataFinal=null;
+        
         while (!voltar)
         {
             sair = false;
@@ -43,15 +63,32 @@ public class MenuSaldoExtrato implements MenuInterface{
                 {
                     case 1:
                     {
-
+                        System.out.println("##### SALDO #####");
+                        System.out.println("> R$ " + String.format("%.2f",conta.getSaldo()));
+                        s.nextLine();
+                        
                     }break;
                     case 2:
                     {
-  
+                        HistoricoDAO historicoDAO = new HistoricoDAO(conta);
+                        try {
+                            List<Historico> historicoList = historicoDAO.getExtrato(null,null);
+                            System.out.println();
+                            System.out.println("##### EXTRATO #####");
+                            
+                            for(Historico umHistorico : historicoList){
+                                strData = umHistorico.getData();
+                                strData = dtBr.format((Date)dtUS.parse(strData));
+                                System.out.println(strData+" - "+umHistorico.getOperacao()+" - "+String.format("%.2f",umHistorico.getValor()));
+                            }
+                            System.out.println();
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
                     }break;
                     case 3:
                     {
-                         s = new Scanner(System.in);
+                        s = new Scanner(System.in);
                         System.out.println("##### INFORME A DATA INICIAL E FINAL #####");
                         System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
                         
@@ -68,7 +105,7 @@ public class MenuSaldoExtrato implements MenuInterface{
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-                                  dataInicial = dateFormat.parse(entrada);
+                                  dataInicial = entrada.trim();
                                   break;
                                 }                                
                                                            
@@ -92,8 +129,28 @@ public class MenuSaldoExtrato implements MenuInterface{
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-                                    dataFinal = dateFormat.parse(entrada);
-                                    System.out.println("------- Extrato de "+dataInicial.toString()+" a "+dataFinal.toString());
+                                    dataFinal = entrada.trim();
+                                    
+                                    System.out.println();
+                                    System.out.println("##### EXTRATO DE "+dataInicial+" ATE "+dataFinal+" #####");
+                                    
+                                    dataInicial = dtUS.format((Date)dtBR.parse(dataInicial));
+                                    dataFinal = dtUS.format((Date)dtBR.parse(dataFinal));
+                                    
+                                    HistoricoDAO historicoDAO = new HistoricoDAO(conta);
+                                    try {
+                                        List<Historico> historicoList = historicoDAO.getExtrato(dataInicial,dataFinal);
+                                        for(Historico umHistorico : historicoList){
+                                            //strData = umHistorico.getData();
+                                            //strData = dtBr.format((Date)dtUS.parse(strData));
+                                            strData = dtBr.format((Date)dtUS.parse(umHistorico.getData()));
+                                            System.out.println(strData+" - "+umHistorico.getOperacao()+" - "+String.format("%.2f",umHistorico.getValor()));
+                                        }
+                                        System.out.println();
+                                    } catch (SQLException ex) {
+                                        System.out.println(ex.getMessage());
+                                    }
+                                    
                                     s.nextLine();
                                     sair = true;
                                 }                                

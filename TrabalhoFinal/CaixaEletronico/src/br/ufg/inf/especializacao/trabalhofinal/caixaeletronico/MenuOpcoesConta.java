@@ -5,9 +5,7 @@
  */
 package br.ufg.inf.especializacao.trabalhofinal.caixaeletronico;
 
-import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Cliente;
 import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Conta;
-import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.ModelException;
 import java.util.Scanner;
 
 /**
@@ -17,11 +15,13 @@ import java.util.Scanner;
 public class MenuOpcoesConta implements MenuInterface{
 
     private Conta conta = null;
+    private double valor;
+    private long agencia_dest;
+    private long conta_dest;
     
     public MenuOpcoesConta(Conta conta)
     {
         this.conta = conta;
-        
     }
     
     @Override
@@ -51,7 +51,7 @@ public class MenuOpcoesConta implements MenuInterface{
                 {
                     case 1:
                     {
-                        MenuSaldoExtrato menuSaldoExtrato = new MenuSaldoExtrato();
+                        MenuSaldoExtrato menuSaldoExtrato = new MenuSaldoExtrato(conta);
                         menuSaldoExtrato.showMenu();
                     }break;
                     case 2:
@@ -73,14 +73,14 @@ public class MenuOpcoesConta implements MenuInterface{
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-                                  double valorSaque = Double.parseDouble(entrada);
+                                  valor = Double.parseDouble(entrada);
                                     
-                                  System.out.print("Confirma o saque de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                  System.out.print("Confirma o saque de R$ "+String.format("%.2f",valor)+"? ['S'=SIM - 'N'=NÃO]: ");
                                   entrada = s.nextLine();
                                   
                                   if (entrada.equalsIgnoreCase("S"))
                                   { 
-                                      conta.setSaque(valorSaque);
+                                      conta.setSaque(valor);
                                       s.nextLine();
                                   }
                                   else
@@ -88,7 +88,6 @@ public class MenuOpcoesConta implements MenuInterface{
                                     System.out.println("Operação não realizada.");
                                     s.nextLine();
                                   }
-                                  
                                   break;
                                 }                                
                                                            
@@ -118,15 +117,16 @@ public class MenuOpcoesConta implements MenuInterface{
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-                                  double valorSaque = Double.parseDouble(entrada);
+                                  valor = Double.parseDouble(entrada);
                                     
-                                  System.out.print("Confirma o deposito de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                  System.out.print("Confirma o deposito de R$ "+String.format("%.2f",valor)+"? ['S'=SIM - 'N'=NÃO]: ");
                                   entrada = s.nextLine();
                                   
                                   if (entrada.equalsIgnoreCase("S"))
-                                  {
+                                  {                                    
+                                      conta.setDeposito(valor);
                                       System.out.println("Depósito realizado com sucesso.");
-                                    s.nextLine();
+                                      s.nextLine();
                                   }
                                   else
                                   {
@@ -146,7 +146,7 @@ public class MenuOpcoesConta implements MenuInterface{
                     }break;
                     case 4:
                     {
-                        s = new Scanner(System.in);
+                        s = new Scanner(System.in);                        
                         System.out.println("##### TRANSFERÊNCIA #####");
                         System.out.println("Para Cancelar, tecle 'S' e em seguida Enter.");
                          
@@ -154,14 +154,14 @@ public class MenuOpcoesConta implements MenuInterface{
                         {
                             System.out.print("> AGENCIA DESTINO: ");
                             entrada = s.nextLine();
-
+                            
                             try
                             {
                                 if (entrada.equalsIgnoreCase("S"))
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-
+                                    agencia_dest = Long.parseLong(entrada);
                                     break;
                                 }
 
@@ -177,28 +177,27 @@ public class MenuOpcoesConta implements MenuInterface{
                         {
                             System.out.print("> CONTA DESTINO: ");
                             entrada = s.nextLine();
-
                             try
                             {
                                 if (entrada.equalsIgnoreCase("S"))
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-
+                                    conta_dest = Long.parseLong(entrada);
                                     break;
                                 }
 
                             }
                             catch(Exception ex)
                             {
-                                 System.out.println(ex.getMessage());
+                                System.out.println(ex.getMessage());
                                 System.out.println();
                             }
                         }
                         
                         while (!sair)
                         {
-                           System.out.print("Valor [R$]:");
+                            System.out.print("Valor [R$]:");
                            
                             try
                             {
@@ -208,22 +207,20 @@ public class MenuOpcoesConta implements MenuInterface{
                                     sair = true;
                                 else if (!entrada.trim().equals("")) 
                                 {
-                                  double valorSaque = Double.parseDouble(entrada);
-                                    
-                                  System.out.print("Confirma a transferência de R$ "+String.format("%.2f",valorSaque)+"? ['S'=SIM - 'N'=NÃO]: ");
-                                  entrada = s.nextLine();
+                                    valor = Double.parseDouble(entrada);
+                                    System.out.print("Confirma a transferência de R$ "+String.format("%.2f",valor)+"? ['S'=SIM - 'N'=NÃO]: ");
+                                    entrada = s.nextLine();
                                   
                                   if (entrada.equalsIgnoreCase("S"))
                                   {
-                                      conta.setTransferencia(valorSaque, opcao);
-                                    s.nextLine();
+                                      conta.setTransferencia(agencia_dest, conta_dest, valor);
+                                      s.nextLine();
                                   }
                                   else
                                   {
                                     System.out.println("Operação não realizada.");
                                     s.nextLine();
                                   }
-                                  
                                   break;
                                 }                                
                                                            
