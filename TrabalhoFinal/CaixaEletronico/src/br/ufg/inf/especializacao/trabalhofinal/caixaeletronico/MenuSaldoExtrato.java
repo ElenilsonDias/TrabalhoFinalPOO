@@ -12,9 +12,11 @@ import br.ufg.inf.especializacao.trabalhofinal.caixaeletronico.model.Historico;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import org.sqlite.util.StringUtils;
 
 /**
  *
@@ -37,13 +39,13 @@ public class MenuSaldoExtrato implements MenuInterface{
         String entrada;
         Scanner s = new Scanner(System.in);
         
+        SimpleDateFormat dtTimeBR = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         SimpleDateFormat dtBR = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat dtBr = new SimpleDateFormat("dd/MM");
         DateFormat dtUS = new SimpleDateFormat("yyyy-MM-dd"); 
-        String strData;
-        dtBR.setLenient(false);
+        String strData, linhaImpressao;
+        dtTimeBR.setLenient(false);
         
-        String dataInicial=null, dataFinal=null;
+        String dataInicial=null, dataFinal=null,dataInicialUS=null, dataFinalUS=null;;
         
         while (!voltar)
         {
@@ -74,14 +76,34 @@ public class MenuSaldoExtrato implements MenuInterface{
                         try {
                             List<Historico> historicoList = historicoDAO.getExtrato(null,null);
                             System.out.println();
-                            System.out.println("##### EXTRATO #####");
+                            System.out.println();
+                            
+                            
+                            linhaImpressao = String.format("| %-20s|", "Data/Hora")+
+                                    String.format(" %-40s|", "Operação") +
+                                    String.format(" %-12s|", "Valor(R$)");
+                            
+                            System.out.println(String.join("", Collections.nCopies(linhaImpressao.length()/2-4,"#"))
+                                    +" EXTRATO "
+                                    +String.join("", Collections.nCopies(linhaImpressao.length()/2-4,"#")));
+                            
+                            System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
+                            System.out.println(linhaImpressao);
+                            System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
                             
                             for(Historico umHistorico : historicoList){
                                 strData = umHistorico.getData();
-                                strData = dtBr.format((Date)dtUS.parse(strData));
-                                System.out.println(strData+" - "+umHistorico.getOperacao()+" - "+String.format("%.2f",umHistorico.getValor()));
+                                strData = dtTimeBR.format(dtUS.parse(strData));
+                                System.out.println(String.format("| %-20s|", strData)+
+                                       String.format(" %-40s|", umHistorico.getOperacao())+
+                                       String.format(" %-12s|", String.format("%.2f",umHistorico.getValor())));
+                                
+                                System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
                             }
                             System.out.println();
+                            
+                            s = new Scanner(System.in);
+                            s.nextLine();
                         } catch (SQLException ex) {
                             System.out.println(ex.getMessage());
                         }
@@ -131,22 +153,58 @@ public class MenuSaldoExtrato implements MenuInterface{
                                 {
                                     dataFinal = entrada.trim();
                                     
-                                    System.out.println();
-                                    System.out.println("##### EXTRATO DE "+dataInicial+" ATE "+dataFinal+" #####");
+                                    //System.out.println();
+                                    //System.out.println("##### EXTRATO DE "+dataInicial+" ATE "+dataFinal+" #####");
                                     
-                                    dataInicial = dtUS.format((Date)dtBR.parse(dataInicial));
-                                    dataFinal = dtUS.format((Date)dtBR.parse(dataFinal));
+                                    dataInicialUS = dtUS.format((Date)dtBR.parse(dataInicial));
+                                    dataFinalUS = dtUS.format((Date)dtBR.parse(dataFinal));
                                     
                                     HistoricoDAO historicoDAO = new HistoricoDAO(conta);
                                     try {
-                                        List<Historico> historicoList = historicoDAO.getExtrato(dataInicial,dataFinal);
-                                        for(Historico umHistorico : historicoList){
+                                        List<Historico> historicoList = historicoDAO.getExtrato(dataInicialUS,dataFinalUS);
+                                        
+                                        
+                                        /*for(Historico umHistorico : historicoList){
                                             //strData = umHistorico.getData();
                                             //strData = dtBr.format((Date)dtUS.parse(strData));
-                                            strData = dtBr.format((Date)dtUS.parse(umHistorico.getData()));
+                                            strData = dtBR.format(dtUS.parse(umHistorico.getData()));
                                             System.out.println(strData+" - "+umHistorico.getOperacao()+" - "+String.format("%.2f",umHistorico.getValor()));
                                         }
+                                        System.out.println();*/
+                                        
+                                        
                                         System.out.println();
+                                        System.out.println();
+
+
+                                        linhaImpressao = String.format("| %-20s|", "Data/Hora")+
+                                                String.format(" %-40s|", "Operação") +
+                                                String.format(" %-12s|", "Valor(R$)");
+
+                                    
+                                        System.out.println(String.join("", Collections.nCopies(linhaImpressao.length()/2-19,"#"))
+                                                +" EXTRATO DE "+dataInicial+" ATE "+dataFinal+" "
+                                                +String.join("", Collections.nCopies(linhaImpressao.length()/2-19,"#")));
+
+                                        System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
+                                        System.out.println(linhaImpressao);
+                                        System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
+
+                                        for(Historico umHistorico : historicoList){
+                                            strData = umHistorico.getData();
+                                            strData = dtTimeBR.format(dtUS.parse(strData));
+                                            System.out.println(String.format("| %-20s|", strData)+
+                                                   String.format(" %-40s|", umHistorico.getOperacao())+
+                                                   String.format(" %-12s|", String.format("%.2f",umHistorico.getValor())));
+
+                                            System.out.println(String.join("", Collections.nCopies(linhaImpressao.length(),"-")));
+                                        }
+                                        System.out.println();
+
+                                        s = new Scanner(System.in);
+                                        s.nextLine();
+                                        
+                                        
                                     } catch (SQLException ex) {
                                         System.out.println(ex.getMessage());
                                     }

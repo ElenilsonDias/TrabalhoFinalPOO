@@ -26,6 +26,7 @@ public class MenuLoginConta implements MenuInterface{
     {
         boolean sair = false;
         String entrada;
+        long codconta = 0, senha = 0,agencia = 0;
         Scanner s = new Scanner(System.in);
         Conta conta =null;
         
@@ -47,7 +48,7 @@ public class MenuLoginConta implements MenuInterface{
                             sair = true;
                         else
                         {
-                                                        
+                            agencia = Long.parseLong(entrada);                          
                             break;
                         }
                     }
@@ -69,11 +70,7 @@ public class MenuLoginConta implements MenuInterface{
                             sair = true;
                         else
                         {
-                             
-                            ContaDAO contaDAO = new ContaDAO ();
-                            conta=contaDAO.getByCod(Long.parseLong(entrada));
-                          
-                            
+                            codconta = Long.parseLong(entrada);                            
                             break;
                         }
                     }
@@ -95,24 +92,45 @@ public class MenuLoginConta implements MenuInterface{
                             sair = true;
                         else
                         {
-                            /*if (conta.getSenha() ==  Long.parseLong(entrada))                      
-                                return conta;
-                            else
+                            senha = Long.parseLong(entrada);
+                            
+                            ContaDAO contaDAO = new ContaDAO ();
+                            conta=contaDAO.getByCod(codconta);
+                            
+                            if (conta.getAgencia() == agencia)
                             {
-                               System.out.println("Senha incorreta.");
-                               s = new Scanner(System.in);
-                               s.nextLine();
+                                if (conta.getSenha() == senha) 
+                                {
+                                    System.out.println();
+                                    System.out.println();
+                                    return conta;
+                                }
+                                else
+                                {
+                                   System.out.println("Senha incorreta.");
+
+                                   s = new Scanner(System.in);
+                                   s.nextLine();
+                                }
                             }
-                               */
-                            
-                            
-                            return conta;
+                            else {
+                                System.out.println("Conta/Agência não conferem.");
+
+                                s = new Scanner(System.in);
+                                s.nextLine();
+                                break;
+                            }
+                               
+                          
                         }
                     }
                     catch(Exception ex)
                     {
                          System.out.println(ex.getMessage());
                         System.out.println();
+                        s = new Scanner(System.in);
+                        s.nextLine();
+                        break;
                     }
                 }
                                                    
